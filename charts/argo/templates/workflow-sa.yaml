@@ -1,13 +1,20 @@
 {{- if .Values.workflow.serviceAccount.create -}}
+{{- if .Values.workflow.namespaces -}}
+  {{ $namespaces := .Values.workflow.namespaces }}
+{{- else if .Values.workflow.namespace }}
+  {{ $namespaces := tuple .Values.workflow.namespace }}
+{{- else }}
+  {{ $namespaces := tuple "argo" }}
+{{- range $namespaces }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ .Values.workflow.serviceAccount.name }}
-  {{- if .Values.workflow.namespace }}
-  namespace: {{ .Values.workflow.namespace }}
-  {{- end }}
+  namespace: {{ . }}
   {{- with .Values.workflow.serviceAccount.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
 {{- end }}
