@@ -24,7 +24,9 @@ createAggregateRoles: true
 singleNamespace: false
 
 workflow:
-  namespace: ""  # Specify namespace if workflows run in another namespace than argo. This controls where the service account and RBAC resources will be created.
+  namespaces: [] # Specify all namespaces to run worksflows need to be able to run in. This controls where the service
+  # account and RBAC resources will be created. If unspecified, will run in the same namespace as argo.
+  #namespace: ""  # Deprecated: Specify the namespace if workflows run in another namespace than argo.
   serviceAccount:
     create: false  # Specifies whether a service account should be created
     annotations: {}
