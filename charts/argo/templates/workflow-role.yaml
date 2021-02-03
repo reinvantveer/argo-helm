@@ -25,10 +25,23 @@ rules:
 {{- end }}
 
 {{- if .Values.workflow.rbac.create -}}
-  {{ include "workflow-role-base" }}
+
+  {{- if .Values.workflow.namespaces }}
+    {{- range .Values.workflow.namespaces}}
+      {{ $namespace := . }}
+      {{- include "workflow-role-base" . }}
+  name: {{ $.Release.Name }}-workflow
+  namespace: {{ $namespace }}
+      {{- include "workflow-role-rules" . }}
+    {{- end }}
+
+  {{- else }}
+    {{- include "workflow-role-base" . }}
   name: {{ .Release.Name }}-workflow
-  {{- if .Values.workflow.namespace }}
+    {{- if .Values.workflow.namespace }}
   namespace: {{ .Values.workflow.namespace }}
+    {{- end }}
+    {{- include "workflow-role-rules" . }}
   {{- end }}
-  {{ include "workflow-role-rules" }}
+
 {{- end }}
