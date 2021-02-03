@@ -1,4 +1,4 @@
-{{- define "sa-template" }}
+{{- define "sa-base" }}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -7,28 +7,26 @@ metadata:
 
 {{- if .Values.workflow.serviceAccount.create -}}
   {{- if .Values.workflow.namespaces -}}
+
     {{ $namespaces := .Values.workflow.namespaces }}
     {{- range $namespaces }}
       {{ $namespace := . }}
-      {{ include "sa-template" . }}
+      {{ include "sa-base" . }}
   name: {{ $.Values.workflow.serviceAccount.name }}
   namespace: {{ $namespace }}
   annotations:
     {{- toYaml $.Values.workflow.serviceAccount.annotations | nindent 4 }}
     {{- end }}
 
-  {{- else if .Values.workflow.namespace }}
-    {{ $namespace := .Values.workflow.namespace }}
-    {{ include "sa-template" . }}
-  name: {{ $.Values.workflow.serviceAccount.name }}
-  namespace: {{ $namespace }}
-  annotations:
-    {{- toYaml $.Values.workflow.serviceAccount.annotations | nindent 4 }}
-
   {{- else }}
-    {{ include "sa-template" . }}
-  name: {{ $.Values.workflow.serviceAccount.name }}
+
+    {{ include "sa-base" . }}
+  name: {{ .Values.workflow.serviceAccount.name }}
+    {{- if $.Values.workflow.namespace }}
+  namespace: {{ $.Values.workflow.namespace }}
+    {{- end }}
   annotations:
-    {{- toYaml $.Values.workflow.serviceAccount.annotations | nindent 4 }}
+    {{- toYaml .Values.workflow.serviceAccount.annotations | nindent 4 }}
+
   {{- end }}
 {{- end }}
